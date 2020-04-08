@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://mybatis.org/schema/mybatis-spring
+       http://mybatis.org/schema/mybatis-spring.xsd">
+
+        <!--  配置SqlSessionFactoryBean依赖的数据源  -->
+        <context:property-placeholder location="app.properties"></context:property-placeholder>
+        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+                <!-- DriverManagerDataSource必须在pom依赖spring-jdbc -->
+                <constructor-arg name="url" value="${jdbc.url}"></constructor-arg>
+                <constructor-arg name="username" value="${jdbc.username}"></constructor-arg>
+                <constructor-arg name="password" value="${jdbc.password}"></constructor-arg>
+        </bean>
+        <!--   配置SqlSessionFactoryBean   -->
+        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+                <property name="dataSource" ref="dataSource"></property>
+        </bean>
+        <!--   配置MapperFactoryBean   -->
+        <bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+                <property name="mapperInterface" value="com.demo.dao.UserMapper"></property>
+                <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+        </bean>
+        <!--   添加事务配置 (spring 事物没有针对myBatis的配置，都是一些常规事物配置)  -->
+        <context:annotation-config></context:annotation-config><!--注解扫描器-->
+        <context:component-scan base-package="com.demo.service.**"></context:component-scan><!--将service包里面的方法扫描进spring容器-->
+        <tx:annotation-driven></tx:annotation-driven><!--事务注解配置-->
+        <bean id="transactionMapper" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+                <constructor-arg ref="dataSource"></constructor-arg>
+        </bean>
+
+<!--        &lt;!&ndash; 如果每个mapper 接口都配置*MapperFactoryBean*相当麻烦 可以通过 如下配置进行自动扫描 &ndash;&gt;-->
+<!--        <mybatis:scan base-package="com.demo.dao"/>-->
+
+</beans>

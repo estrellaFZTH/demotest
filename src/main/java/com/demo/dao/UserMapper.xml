@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--配置此mapper.xml对应的mapper类-->
+<mapper namespace="com.demo.dao.UserMapper">
+    <update id="updateUserById" parameterType="com.demo.vo.User">
+        update user set name = ${name} where id = ${id}
+    </update>
+
+    <insert id="insertUser" parameterType="com.demo.vo.User">
+        insert into user(username, password, createtime, updatetime)
+            values (#{userName}, #{passWord}, #{createTime}, #{updateTime})
+    </insert>
+</mapper>
